@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 from uuid import uuid4
 from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS
+import tempfile
+from io import IOBase
+
 load_dotenv()
 
 EXPIRES_IN_6_DAYS = 518400
@@ -35,14 +38,22 @@ def create_presigned_url(key):
 
 def upload_to_s3(image_file):
     """Uploads an image to S3 storage"""
-    new_key = uuid4()
+    new_key = str(uuid4())
+    # temp = tempfile.NamedTemporaryFile()
+    # with open(image_file.filename, "rb") as f:
+    #     jpg_data = f.read
+    #     open(temp, "rb")
+    #     temp.write(jpg_data)
+    #     temp.close
 
-    s3.upload_file(
+    # with open(image_file, "rb") as readable_file:
+
+    s3.upload_fileobj(
         image_file,
         PIXLEY_BUCKET,
         new_key,
         ExtraArgs={'ContentType': 'image/jpeg'})
-    print()
+    print("uploaded")
     return new_key
 
 def get_exif_data(image_file):
@@ -71,6 +82,9 @@ def get_exif_data(image_file):
                 image_exif_dict["image_description"] = value
             if tag_name == "DateTime":
                 image_exif_dict["date"] = value
+        image_file.seek(0)
+        print("cursor position: ", image_file.tell())
+
     return image_exif_dict
 
 

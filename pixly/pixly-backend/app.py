@@ -30,14 +30,21 @@ def add_photo():
     # TODO: secure_filename from werkzerug???
     #TODO: ideas for file-to-S3: temp storage of file in server, manipulating data from form into correct structure
     try:
-        photo = request.json["url"]
-        # photo = request.files["user_photo"]
-        print(photo, "from json")
+
+        photo = request.files["user_photo"]
+        print(photo, "photo object")
+        print(photo.filename, "photo filename")
 
 
+        photo_exif_dict = get_exif_data(photo)
+        # photo_exif_dict = {
+        #     "gps_info": None,
+        #     "camera_model": None,
+        #     "camera_make": None,
+        #     "image_description": None,
+        #     "date": None}
         photo_key = upload_to_s3(photo)
         photo_url = create_presigned_url(photo_key)
-        photo_exif_dict = get_exif_data(photo)
 
         new_photo_entry = Photo(url=photo_url,
                                 gps_info=photo_exif_dict["gps_info"],
