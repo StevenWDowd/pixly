@@ -60,6 +60,10 @@ presigned_url = s3.generate_presigned_url(
 )
 print(presigned_url, "presignedURL")
 
+
+#get metadata from an image
+# helper functions
+    # function to convert date and time string to db compatible date/time str
 with Image.open("./canon_hdr_YES.jpg") as test_image:
     sample_exif = test_image.getexif()
     for tag_id in sample_exif:
@@ -67,18 +71,24 @@ with Image.open("./canon_hdr_YES.jpg") as test_image:
         value = sample_exif.get(tag_id)
         #print(f'{tag_name},{value}')
 
-with Image.open("./DSCN0021.jpg") as test_image2:
-    sample_exif = test_image2.getexif()
-    for tag_id in sample_exif:
-        tag_name = TAGS.get(tag_id, tag_id)
-        value = sample_exif.get(tag_id)
-        print(f'{tag_name},{value},{type(value)}')
-        if tag_name == 'DateTime':
-            print('converted date: ', parse(value, yearfirst=True, ignoretz=True))
+# with Image.open("./DSCN0021.jpg") as test_image2:
+#     sample_exif = test_image2.getexif()
+#     for tag_id in sample_exif:
+#         tag_name = TAGS.get(tag_id, tag_id)
+#         value = sample_exif.get(tag_id)
+#         print(f'{tag_name},{value},{type(value)}')
+#         if tag_name == 'DateTime':
+#             print('converted date: ', parse(value, yearfirst=True, ignoretz=True))
 
-    #GPS_data = sample_exif.get_ifd(ExifTags.TAGS[306])
-    #print("EXIF data: ", sample_exif)
-    #print("GPS_data is: ", GPS_data)
+test_image3 = Image.open("./DSCN0021.jpg")
+exif = test_image3.getexif()
+print(exif, "EXIF OBJ")
+gps_ifd = exif.get_ifd(ExifTags.IFD.GPSInfo)
+print(gps_ifd, "GPS DATA")
+
+#GPS_data = sample_exif.get_ifd(ExifTags.TAGS[306])
+#print("EXIF data: ", sample_exif)
+#print("GPS_data is: ", GPS_data)
 
 # if presigned_url is not None:
 #     response = requests.get(presigned_url)
