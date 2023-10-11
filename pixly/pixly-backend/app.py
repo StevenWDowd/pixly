@@ -1,10 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import boto3
 import os
 from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS
-from models import db, connect_db
-
+from models import db, connect_db, Photo
+from utils import upload_to_s3, create_presigned_url, get_exif_data
 
 #import requests
 
@@ -24,7 +24,24 @@ def add_photo():
     """Adds a photo"""
 
     # formdata
-    photo = request.files["url"]
+    #TODO: put this in try/except block
+    try
+    photo = request.files["user_photo"]
+    photo_key = upload_to_s3(photo)
+    photo_url = create_presigned_url(photo_key)
+    photo_exif_dict = get_exif_data(photo)
+
+    new_photo_entry = Photo(url=photo_url,
+                            gps_info=photo_exif_dict["gps_info"],
+                            camera_model=photo_exif_dict["camera_model"],
+                            camera_make=photo_exif_dict["camera_make"],
+                            image_description=photo_exif_dict["image_description"],
+                            date=photo_exif_dict["date"])
+    db.session.add(new_photo_entry)
+    db.session.commit()
+
+    response = {"message": "Photo uploaded"}
+    return (jsonify(response), 201)
     # massage this data to go into s3
 
     # create a key for s3
@@ -32,7 +49,7 @@ def add_photo():
     # extract metadata from photo
     # massage the data to go into db
 
-    # Photo(url, gps_info, camera_make, camera_model, image_description, date)
+    # Photo(photo_url, gps_info, camera_make, camera_model, image_description, date)
     #sumbit to database
 
     # json back to front end- {message: success to upload photo, statuscode: 201}
