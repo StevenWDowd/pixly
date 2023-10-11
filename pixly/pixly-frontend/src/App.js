@@ -1,23 +1,27 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import AddPhotoForm from './AddPhotoForm';
+import uploadImage from './pixlyApi';
 
+/** App
+ *
+ * State:
+ * -photoList
+ *
+ * App -> AddPhotoForm
+ */
 function App() {
+  const [photoList, setPhotoList] = useState([]);
+
+  async function uploadPhoto(img) {
+    const resp = await PixlyApi.uploadImage(img);
+    const newPhoto = await resp.json() //{obj of photo info} or {message: photo failed to upload}
+    setPhotoList([...photoList, newPhoto])
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AddPhotoForm uploadPhoto={uploadPhoto} />
     </div>
   );
 }

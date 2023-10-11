@@ -51,8 +51,8 @@ def add_photo():
                                 date=photo_exif_dict["date"])
         db.session.add(new_photo_entry)
         db.session.commit()
-        response = {"message": "Photo uploaded"}
-        return (jsonify(response), 201)
+
+        return (jsonify(new_photo_entry.serialize()), 201)
 
     except IntegrityError:
         response = {"message": "Photo failed to upload"}
