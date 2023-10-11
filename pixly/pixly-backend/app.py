@@ -5,6 +5,7 @@ from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS
 from models import db, connect_db, Photo
 from utils import upload_to_s3, create_presigned_url, get_exif_data
+from sqlalchemy.exc import IntegrityError
 
 #import requests
 
@@ -13,6 +14,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///pixly')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
+
+SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+PUBLIC_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
 
 connect_db(app)
 
@@ -23,36 +27,36 @@ connect_db(app)
 def add_photo():
     """Adds a photo"""
 
-    # formdata
-    #TODO: put this in try/except block
-    try
-    photo = request.files["user_photo"]
-    photo_key = upload_to_s3(photo)
-    photo_url = create_presigned_url(photo_key)
-    photo_exif_dict = get_exif_data(photo)
+    # TODO: secure_filename from werkzerug???
+    #TODO: ideas for file-to-S3: temp storage of file in server, manipulating data from form into correct structure
+    try:
+        photo = request.json["url"]
+        # photo = request.files["user_photo"]
+        print(photo, "from json")
 
-    new_photo_entry = Photo(url=photo_url,
-                            gps_info=photo_exif_dict["gps_info"],
-                            camera_model=photo_exif_dict["camera_model"],
-                            camera_make=photo_exif_dict["camera_make"],
-                            image_description=photo_exif_dict["image_description"],
-                            date=photo_exif_dict["date"])
-    db.session.add(new_photo_entry)
-    db.session.commit()
 
-    response = {"message": "Photo uploaded"}
-    return (jsonify(response), 201)
+        photo_key = upload_to_s3(photo)
+        photo_url = create_presigned_url(photo_key)
+        photo_exif_dict = get_exif_data(photo)
+
+        new_photo_entry = Photo(url=photo_url,
+                                gps_info=photo_exif_dict["gps_info"],
+                                camera_model=photo_exif_dict["camera_model"],
+                                camera_make=photo_exif_dict["camera_make"],
+                                image_description=photo_exif_dict["image_description"],
+                                date=photo_exif_dict["date"])
+        db.session.add(new_photo_entry)
+        db.session.commit()
+        response = {"message": "Photo uploaded"}
+        return (jsonify(response), 201)
+
+    except IntegrityError:
+        response = {"message": "Photo failed to upload"}
+        return (jsonify(response), 400)
+
     # massage this data to go into s3
-
-    # create a key for s3
-    # get the url back from s3
-    # extract metadata from photo
     # massage the data to go into db
 
-    # Photo(photo_url, gps_info, camera_make, camera_model, image_description, date)
-    #sumbit to database
-
-    # json back to front end- {message: success to upload photo, statuscode: 201}
 
 #get all photos
 @app.get('/photos')
@@ -62,7 +66,7 @@ def get_all_photos():
     # json with list of photos
 
 
-@app.get('/photos/<in:id>')
+@app.get('/photos/<int:id>')
 def get_photo(id):
     """Get a photo."""
     #query database for photo by id
