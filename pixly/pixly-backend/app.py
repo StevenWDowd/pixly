@@ -20,9 +20,7 @@ PUBLIC_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
 
 connect_db(app)
 
-
-#routes:
-#add a photo
+####################### Routes ###################################
 @app.post('/add')
 def add_photo():
     """Adds a photo"""
@@ -30,7 +28,6 @@ def add_photo():
     # TODO: secure_filename from werkzerug???
     #TODO: ideas for file-to-S3: temp storage of file in server, manipulating data from form into correct structure
     try:
-
         photo = request.files["user_photo"]
         print(photo, "photo object")
         print(photo.filename, "photo filename")
@@ -69,15 +66,19 @@ def add_photo():
 @app.get('/photos')
 def get_all_photos():
     """Get all photos."""
-    #query the database for all photos
-    # json with list of photos
 
+    photos = Photo.query.all()
+    serialized_photos = [photo.serialize() for photo in photos]
+    return jsonify(serialized_photos)
 
 @app.get('/photos/<int:id>')
 def get_photo(id):
     """Get a photo."""
-    #query database for photo by id
-    #json with info on photo
+
+    photo = Photo.query.get_or_404(id)
+    serialize_photo = photo.serialize()
+    return jsonify(serialize_photo)
+
 
 
 

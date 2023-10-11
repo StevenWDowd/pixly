@@ -49,3 +49,15 @@ class Photo(db.Model):
         db.String,
         nullable=True
     )
+
+    def serialize(self):
+        """Serialize to dictionary."""
+
+        return {
+            "url": self.url,
+            "gps_info": self.gps_info,
+            "camera_model": self.camera_model,
+            "camera_make": self.camera_make,
+            "image_description": self.image_description,
+            "date": self.date
+        }

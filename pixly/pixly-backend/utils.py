@@ -90,7 +90,6 @@ def get_exif_data(image_file):
 
 
 
-
 # test_pic_key = 'test-jpg2'
 
 # # gets all buckets
