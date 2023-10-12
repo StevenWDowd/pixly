@@ -11,7 +11,8 @@ from flask_cors import CORS, cross_origin
 #import requests
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000/"], resources=r'/*')
+CORS(app, origins=["http://localhost:3000"], allow_headers= "*")
+# , origins=["http://localhost:3000/"], resources=r'/*'
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///pixly')
@@ -24,6 +25,12 @@ PUBLIC_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
 connect_db(app)
 
 ####################### Routes ###################################
+# @app.route("/add")
+# def helloWorld():
+#     response = "Hello, cross-origin-world!"
+#     return jsonify(response)
+
+
 @app.post('/add')
 #@cross_origin(allow_headers=['Content-Type'])
 def add_photo():
@@ -56,7 +63,9 @@ def add_photo():
         db.session.add(new_photo_entry)
         db.session.commit()
 
-        return (jsonify(new_photo_entry.serialize()), 201)
+        response = jsonify(new_photo_entry.serialize())
+        # response.headers.add('Access-Control-Allow-Origin', '*')
+        return (response, 201)
 
     except IntegrityError:
         response = {"message": "Photo failed to upload"}
