@@ -8,11 +8,12 @@ from utils import upload_to_s3, create_presigned_url, get_exif_data
 from sqlalchemy.exc import IntegrityError
 from flask_cors import CORS, cross_origin
 
-#import requests
+# import requests
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"], allow_headers= "*")
-# , origins=["http://localhost:3000/"], resources=r'/*'
+CORS(app)
+# , origins=["http://localhost:3000/"], resources=r'/*', allow_headers= "*"
+# app.config['CORS_ALLOW_HEADERS'] = 'Access-Control-Allow-Origin'
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///pixly')
@@ -32,17 +33,17 @@ connect_db(app)
 
 
 @app.post('/add')
-#@cross_origin(allow_headers=['Content-Type'])
+# @cross_origin(allow_headers=['Content-Type'])
 def add_photo():
     """Adds a photo"""
 
     # TODO: secure_filename from werkzerug???
-    #TODO: ideas for file-to-S3: temp storage of file in server, manipulating data from form into correct structure
+    # TODO: ideas for file-to-S3: temp storage of file in server, manipulating data from form into correct structure
     try:
+        # breakpoint()
         photo = request.files["user_photo"]
         print(photo, "photo object")
         print(photo.filename, "photo filename")
-
 
         photo_exif_dict = get_exif_data(photo)
         # photo_exif_dict = {
@@ -75,7 +76,7 @@ def add_photo():
     # massage the data to go into db
 
 
-#get all photos
+# get all photos
 @app.get('/photos')
 def get_all_photos():
     """Get all photos."""
@@ -83,6 +84,7 @@ def get_all_photos():
     photos = Photo.query.all()
     serialized_photos = [photo.serialize() for photo in photos]
     return jsonify(serialized_photos)
+
 
 @app.get('/photos/<int:id>')
 def get_photo(id):
@@ -93,11 +95,6 @@ def get_photo(id):
     return jsonify(serialize_photo)
 
 
+# EXIF fields to start off: GPSInfo, Make, Model, ImageDescription, DateTime, Software?
 
-
-
-
-
-#EXIF fields to start off: GPSInfo, Make, Model, ImageDescription, DateTime, Software?
-
-#DB Schema: id, {metadata field cols}, url
+# DB Schema: id, {metadata field cols}, url

@@ -54,6 +54,7 @@ class Photo(db.Model):
         """Serialize to dictionary."""
 
         return {
+            "id": self.id,
             "url": self.url,
             "gps_info": self.gps_info,
             "camera_model": self.camera_model,

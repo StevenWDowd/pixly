@@ -7,21 +7,16 @@ import { useState } from "react";
  *
  */
 function AddPhotoForm({ uploadPhoto }) {
-  const [formData, setFormData] = useState({user_photo: ""});
+  const [formData, setFormData] = useState(null);
 
   function handleChange(evt) {
-    const { value, name } = evt.target;
-    setFormData(f => ({
-      ...f,
-      [name]: value,
-    }));
+    setFormData(evt.target.files[0]);
   }
 
   async function handleSubmit(evt) {
     evt.preventDefault();
     try {
-      const { value } = evt.target;
-      console.log("formData is ", formData);
+      // console.log("formData is ", formData);
       await uploadPhoto(formData);
     } catch (err) {
       console.log(err, "error caught in AddPhotoForm");
@@ -30,7 +25,13 @@ function AddPhotoForm({ uploadPhoto }) {
   return (
     <form className="AddPhotoForm" onSubmit={handleSubmit}>
       <label htmlFor="photo"></label>
-      <input id="photo" name="user_photo" type="file" accept=".jpg" value={formData.user_photo} onChange={handleChange}></input>
+      <input
+        id="photo"
+        name="user_photo"
+        type="file"
+        accept=".jpg"
+        files={formData}
+        onChange={handleChange}></input>
       <button className="AddPhotoForm-submit-btn">Submit Photo</button>
     </form>
   );

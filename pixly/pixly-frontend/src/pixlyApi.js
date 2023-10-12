@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5001"
+const BASE_URL = "http://localhost:5001";
 
 /** API class
  *
@@ -16,13 +16,14 @@ class PixlyApi {
   }
 
   static async uploadImage(photo) {
-    console.log(photo);
-    let res = await fetch(`${BASE_URL}/add`, {
+    const formData = new FormData();
+    formData.append('user_photo', photo);
+    const res = await fetch(`${BASE_URL}/add`, {
       method: "POST",
-      body: { 'user_photo': photo },
-      headers: { 'content-type': "multipart/form-data" }
+      body: formData,
     });
-    if (res.status === 400){
+
+    if (res.status === 400) {
       console.log("bad request");
     }
     return res;

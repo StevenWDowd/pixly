@@ -14,8 +14,9 @@ function App() {
   const [photoList, setPhotoList] = useState([]);
 
   async function uploadPhoto(formData) {
-    const img = formData.user_photo
+    const img = formData
     const resp = await PixlyApi.uploadImage(img);
+    console.log(resp, "response")
     const newPhoto = await resp.json() //{obj of photo info} or {message: photo failed to upload}
     setPhotoList([...photoList, newPhoto])
   }
