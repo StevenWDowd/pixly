@@ -103,7 +103,6 @@ def black_white_photo(key):
     #print(temp.readlines())
 
     with Image.open(temp) as t:
-        t.load()
         print("entered Image with block")
         t.convert(mode="L")
         print(t.format)
