@@ -22,7 +22,6 @@ function App() {
         const allPhotos = await PixlyApi.getAllImages();
         setPhotoList(allPhotos);
       } catch (err) {
-        console.log("error fetching photos");
         setPhotoList([]);
       }
     }
@@ -31,18 +30,24 @@ function App() {
 
   async function uploadPhoto(formData) {
     const img = formData;
-    const resp = await PixlyApi.uploadImage(img);
-    console.log(resp, "response");
-    const newPhoto = await resp.json(); //{obj of photo info} or {message: photo failed to upload}
+    const response = await PixlyApi.uploadImage(img);
+    const newPhoto = await response.json(); //{obj of photo info} or {message: photo failed to upload}
     setPhotoList([...photoList, newPhoto]);
+  }
+
+  async function searchPhoto(formData) {
+    const photos = await PixlyApi.getSearchedImages(formData);
+    setPhotoList(photos);
   }
 
   return (
     <div className="App">
       <BrowserRouter>
         <NavBar />
-        <RoutesList uploadPhoto={uploadPhoto} photoList={photoList} />
-        {/* <AddPhotoForm uploadPhoto={uploadPhoto} /> */}
+        <RoutesList
+          uploadPhoto={uploadPhoto}
+          photoList={photoList}
+          searchPhoto={searchPhoto} />
       </BrowserRouter>
     </div>
   );

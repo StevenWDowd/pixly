@@ -8,13 +8,9 @@ from utils import upload_to_s3, create_presigned_url, get_exif_data
 from sqlalchemy.exc import IntegrityError
 from flask_cors import CORS, cross_origin
 
-# import requests
-
 app = Flask(__name__)
 CORS(app)
-# , origins=["http://localhost:3000/"], resources=r'/*', allow_headers= "*"
-# app.config['CORS_ALLOW_HEADERS'] = 'Access-Control-Allow-Origin'
-app.config['CORS_HEADERS'] = 'Content-Type'
+# app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///pixly')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -26,14 +22,9 @@ PUBLIC_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
 connect_db(app)
 
 ####################### Routes ###################################
-# @app.route("/add")
-# def helloWorld():
-#     response = "Hello, cross-origin-world!"
-#     return jsonify(response)
 
 
-@app.post('/add')
-# @cross_origin(allow_headers=['Content-Type'])
+@app.post('/photos/add')
 def add_photo():
     """Adds a photo"""
 
@@ -46,12 +37,6 @@ def add_photo():
         print(photo.filename, "photo filename")
 
         photo_exif_dict = get_exif_data(photo)
-        # photo_exif_dict = {
-        #     "gps_info": None,
-        #     "camera_model": None,
-        #     "camera_make": None,
-        #     "image_description": None,
-        #     "date": None}
         photo_key = upload_to_s3(photo)
         photo_url = create_presigned_url(photo_key)
 
@@ -95,6 +80,16 @@ def get_photo(id):
     return jsonify(serialize_photo)
 
 
-# EXIF fields to start off: GPSInfo, Make, Model, ImageDescription, DateTime, Software?
+@app.post('/photos/search')
+def search_photos():
+    """Get photos based on a search term."""
+    term = request.json["search_term"]
+    print(term, "THIS IS TERM IN BACKEND")
+    photos = Photo.query.filter(
+        Photo.camera_model.ilike(f'%{term}%') |
+        Photo.camera_make.ilike(f'%{term}%') |
+        Photo.image_description.ilike(f'%{term}%') |
+        Photo.date.ilike(f'%{term}%'))
 
-# DB Schema: id, {metadata field cols}, url
+    serialized_photos = [photo.serialize() for photo in photos]
+    return jsonify(serialized_photos)
