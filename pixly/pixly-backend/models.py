@@ -25,6 +25,12 @@ class Photo(db.Model):
         unique=True
     )
 
+    s3_key = db.Column(
+        db.String,
+        nullable=False,
+        unique=True
+    )
+
     gps_info = db.Column(
         db.Integer,
         nullable=True
@@ -56,6 +62,7 @@ class Photo(db.Model):
         return {
             "id": self.id,
             "url": self.url,
+            "s3_key": self.s3_key,
             "gps_info": self.gps_info,
             "camera_model": self.camera_model,
             "camera_make": self.camera_make,

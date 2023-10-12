@@ -4,7 +4,7 @@ import os
 from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS
 from models import db, connect_db, Photo
-from utils import upload_to_s3, create_presigned_url, get_exif_data
+from utils import upload_to_s3, create_presigned_url, get_exif_data, black_white_photo
 from sqlalchemy.exc import IntegrityError
 from flask_cors import CORS, cross_origin
 
@@ -41,6 +41,7 @@ def add_photo():
         photo_url = create_presigned_url(photo_key)
 
         new_photo_entry = Photo(url=photo_url,
+                                s3_key=photo_key,
                                 gps_info=photo_exif_dict["gps_info"],
                                 camera_model=photo_exif_dict["camera_model"],
                                 camera_make=photo_exif_dict["camera_make"],
@@ -93,3 +94,19 @@ def search_photos():
 
     serialized_photos = [photo.serialize() for photo in photos]
     return jsonify(serialized_photos)
+
+@app.post('/photos/<int:id>')
+def alter_photo(id):
+    """Alter photo (color, border) based on user input"""
+    command = request.json["command"]
+    if command == "blackwhite":
+        #func in utils to change photo
+        photo = Photo.query.get_or_404(id)
+        black_white_photo(photo.s3_key)
+
+    response = {"message": "dummy response"}
+    return jsonify(response)
+
+
+
+

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from uuid import uuid4
 from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS
-import tempfile
+from tempfile import NamedTemporaryFile
 from io import IOBase
 
 load_dotenv()
@@ -86,6 +86,35 @@ def get_exif_data(image_file):
         print("cursor position: ", image_file.tell())
 
     return image_exif_dict
+
+def black_white_photo(key):
+    temp = NamedTemporaryFile(delete=False)
+    #s3.download_file(PIXLEY_BUCKET, key, temp.name)
+    s3.download_fileobj(PIXLEY_BUCKET, key, temp)
+    temp.seek(0)
+    #temp has our photo data
+    print("key is ", key)
+    #print("temp is: ", temp)
+    #print("tempname is: ", temp.name)
+    #print("cursor position: ", temp.tell())
+    #temp.close()
+    print("temp closed?", temp.closed)
+    #print("temp after closing is: ", temp)
+    #print(temp.readlines())
+
+    with Image.open(temp) as t:
+        t.load()
+        print("entered Image with block")
+        t.convert(mode="L")
+        print(t.format)
+        t.seek(0)
+
+    # s3.upload_fileobj(
+    #     temp,
+    #     PIXLEY_BUCKET,
+    #     key,
+    #     ExtraArgs={'ContentType': 'image/jpeg'})
+
 
 
 
