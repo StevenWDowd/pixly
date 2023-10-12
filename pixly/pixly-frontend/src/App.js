@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import AddPhotoForm from './AddPhotoForm';
 import PixlyApi from './pixlyApi';
+import { BrowserRouter, Navigate } from "react-router-dom";
+import RoutesList from './RoutesList';
 
 /** App
  *
@@ -13,6 +15,19 @@ import PixlyApi from './pixlyApi';
 function App() {
   const [photoList, setPhotoList] = useState([]);
 
+  useEffect(function getPhotos() {
+    async function fetchPhotos() {
+      try {
+        const allPhotos = await PixlyApi.getAllImages();
+        setPhotoList(allPhotos)
+      } catch (err) {
+        console.log("error fetching photos");
+        setPhotoList([]);
+      }
+    }
+    fetchPhotos();
+  }, []);
+
   async function uploadPhoto(formData) {
     const img = formData
     const resp = await PixlyApi.uploadImage(img);
@@ -23,7 +38,10 @@ function App() {
 
   return (
     <div className="App">
-      <AddPhotoForm uploadPhoto={uploadPhoto} />
+      <BrowserRouter>
+        <RoutesList uploadPhoto={uploadPhoto} photoList={photoList}/>
+        {/* <AddPhotoForm uploadPhoto={uploadPhoto} /> */}
+      </BrowserRouter>
     </div>
   );
 }

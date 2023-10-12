@@ -8,10 +8,16 @@ const BASE_URL = "http://localhost:5001";
 
 class PixlyApi {
 
-  static async getImage() {
+  static async getImage(id) {
+    const res = await fetch(`${BASE_URL}/photos/${id}`);
+    const photo = await res.json();
+    return photo;
 
   }
   static async getAllImages() {
+    const res = await fetch(`${BASE_URL}/photos`);
+    const photos = await res.json();
+    return photos;
 
   }
 
