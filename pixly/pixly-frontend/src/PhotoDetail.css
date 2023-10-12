@@ -1,0 +1,13 @@
+.PhotoDetail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.PhotoDetail-img{
+  max-width: 200px;
+  margin: 2rem
+}
+
+PhotoDetail-info{
+
+}

@@ -1,14 +1,15 @@
 import Photo from "./Photo";
+import "./PhotoList.css";
 
-function PhotoList({photos}){
+function PhotoList({ photos }) {
   return (
-    <div className="PhotoList">
-      <ul className="PhotoList-ul">
-        {photos.map(p => <li key={p.id}><Photo photo={p}/></li>)}
-      </ul>
-
-    </div>
-  )
+    <>
+      <h1 className="PhotoList-title">Pixly</h1>
+      <div className="PhotoList">
+        {photos.map(p => <Photo key={p.id} photo={p} />)}
+      </div>
+    </>
+  );
 }
 
 export default PhotoList;

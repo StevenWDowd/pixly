@@ -1,0 +1,9 @@
+.PhotoList{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1rem;
+}
+.PhotoList-title{
+  color: green
+}

@@ -1,0 +1,12 @@
+.NavBar{
+    display: flex;
+    justify-content: space-around;
+    background-color: green;
+    padding: 1rem
+}
+
+.NavBar-link{
+  text-decoration: none;
+  color: greenyellow;
+  background-color: green;
+}

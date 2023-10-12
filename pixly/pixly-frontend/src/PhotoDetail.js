@@ -1,37 +1,39 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PixlyApi from "./pixlyApi";
-import Photo from "./Photo";
+import "./PhotoDetail.css";
 
-function PhotoDetail(){
+function PhotoDetail() {
   const initialData = {
     id: -1,
-    url:"",
+    url: "",
     camera_make: "",
     camera_model: "",
     image_description: "",
     gps_info: null,
-  }
+  };
   const [image, setImage] = useState(initialData);
-  const {id} = useParams();
+  const { id } = useParams();
 
-  useEffect(function getPhoto(){
-    async function fetchPhoto(){
+  useEffect(function getPhoto() {
+    async function fetchPhoto() {
       const photo = await PixlyApi.getImage(id);
       setImage(photo);
     }
-    fetchPhoto()
+    fetchPhoto();
   }, []);
   //TODO: add buttons for border/color change?
 
   return (
     <div className="PhotoDetail">
       <img className="PhotoDetail-img" src={image.url}></img>
-      <p>{image.image_description}</p>
-      <p>{image.camera_make}</p>
-      <p>{image.camera_model}</p>
+      <div className="PhotoDetail-container"><h3>Image information:</h3>
+        <p className="PhotoDetail-info">{image.image_description}</p>
+        <p className="PhotoDetail-info">{image.camera_make}</p>
+        <p className="PhotoDetail-info">{image.camera_model}</p>
+      </div>
     </div>
-  )
+  );
 
 
   // <p>{Photo.image_description}</p>
@@ -39,4 +41,4 @@ function PhotoDetail(){
 
 }
 
-export default PhotoDetail
+export default PhotoDetail;
