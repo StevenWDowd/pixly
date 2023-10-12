@@ -16,12 +16,18 @@ class PixlyApi {
   }
 
   static async uploadImage(photo) {
+    console.log(photo);
     let res = await fetch(`${BASE_URL}/add`, {
       method: "POST",
       body: { 'user_photo': photo },
       headers: { 'content-type': "multipart/form-data" }
     });
+    if (res.status === 400){
+      console.log("bad request");
+    }
     return res;
   }
 
 }
+
+export default PixlyApi;

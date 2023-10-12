@@ -6,10 +6,13 @@ from PIL.ExifTags import TAGS
 from models import db, connect_db, Photo
 from utils import upload_to_s3, create_presigned_url, get_exif_data
 from sqlalchemy.exc import IntegrityError
+from flask_cors import CORS, cross_origin
 
 #import requests
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000/"], resources=r'/*')
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///pixly')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -22,6 +25,7 @@ connect_db(app)
 
 ####################### Routes ###################################
 @app.post('/add')
+#@cross_origin(allow_headers=['Content-Type'])
 def add_photo():
     """Adds a photo"""
 

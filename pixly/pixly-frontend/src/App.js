@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import AddPhotoForm from './AddPhotoForm';
-import uploadImage from './pixlyApi';
+import PixlyApi from './pixlyApi';
 
 /** App
  *
@@ -13,7 +13,8 @@ import uploadImage from './pixlyApi';
 function App() {
   const [photoList, setPhotoList] = useState([]);
 
-  async function uploadPhoto(img) {
+  async function uploadPhoto(formData) {
+    const img = formData.user_photo
     const resp = await PixlyApi.uploadImage(img);
     const newPhoto = await resp.json() //{obj of photo info} or {message: photo failed to upload}
     setPhotoList([...photoList, newPhoto])
