@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /** Renders a form to upload a photo
  *
  * Props:
- * -uploadPhoto
+ * -uploadPhoto: function from parent
  *
+ * State:
+ *  -formData: a .jpg file
+ *
+ * App -> RoutesList -> AddPhotoForm
  */
 function AddPhotoForm({ uploadPhoto }) {
   const [formData, setFormData] = useState(null);
+  const navigate = useNavigate();
 
   function handleChange(evt) {
     setFormData(evt.target.files[0]);
@@ -15,12 +21,17 @@ function AddPhotoForm({ uploadPhoto }) {
 
   async function handleSubmit(evt) {
     evt.preventDefault();
-    try {
-      // console.log("formData is ", formData);
-      await uploadPhoto(formData);
-    } catch (err) {
-      console.log(err, "error caught in AddPhotoForm");
-    }
+    if (formData) {
+      try {
+        await uploadPhoto(formData);
+        navigate("/");
+      } catch (err) {
+        console.log(err, "error caught in AddPhotoForm");
+        alert("Sorry, there was an error in your upload.")
+      }
+  } else {
+    alert("You must attach a .jpg file");
+  }
   }
   return (
     <form className="AddPhotoForm" onSubmit={handleSubmit}>

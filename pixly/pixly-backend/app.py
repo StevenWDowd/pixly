@@ -104,8 +104,9 @@ def alter_photo(id):
         photo = Photo.query.get_or_404(id)
         black_white_photo(photo.s3_key)
 
-    response = {"message": "dummy response"}
-    return jsonify(response)
+    photo = Photo.query.get_or_404(id)
+    serialize_photo = photo.serialize()
+    return jsonify(serialize_photo)
 
 
 

@@ -3,14 +3,17 @@ import React, { useState } from 'react';
 /** SearchForm
  *
  * State
- * -formData
+ * -formData: a string
  *
  * Props
- * -searchPhoto
+ * -searchPhoto: function from parent
+ *
+ * App -> RoutesList -> PhotoList -> SearchForm
  */
 function SearchForm({ searchPhoto }) {
   const [formData, setFormData] = useState("");
 
+  //Called to handle form submission.
   async function handleSubmit(evt) {
     evt.preventDefault();
     try {
@@ -18,9 +21,11 @@ function SearchForm({ searchPhoto }) {
       setFormData("");
     } catch (err) {
       console.log(err, "err in search form");
+      alert("Sorry, we couldn't complete your search.");
     }
   }
 
+  //Keeps track of form input values
   function handleChange(evt) {
     const { value } = evt.target;
     setFormData(value);

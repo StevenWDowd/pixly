@@ -1,7 +1,13 @@
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
-import "./NavBar.css"
+import { NavLink } from "react-router-dom";
+import "./NavBar.css";
 
+/** Renders a Nav bar.
+ *  Props: none
+ *  State: none
+ *
+ *  App -> NavBar
+ */
 function NavBar() {
   return (
     <nav className="NavBar">
