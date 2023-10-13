@@ -77,7 +77,6 @@ def get_exif_data(image_file):
             if tag_name == "DateTime":
                 image_exif_dict["date"] = value
         image_file.seek(0)
-        print("cursor position: ", image_file.tell())
 
     return image_exif_dict
 
