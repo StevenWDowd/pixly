@@ -91,8 +91,8 @@ def black_white_photo(key):
             gray_scale = t.convert("L")
             gray_scale.save(temp.name)
 
-            orientation = ImageOps.exif_transpose(gray_scale)
-            orientation.save(temp.name)
+            oriented = ImageOps.exif_transpose(gray_scale)
+            oriented.save(temp.name)
 
             s3.upload_file(
                 temp.name,
