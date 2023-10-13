@@ -1,10 +1,11 @@
 .Photo{
-  max-width: 100px;
-  max-height: 100px;
+  max-width: 300px;
+  max-height: auto;
+  margin: 1rem;
 }
 
 .Photo-img{
-  max-width: 100px;
-  max-height: 100px;
+  max-width: 200px;
+  max-height: auto;
   margin: 1rem
 }

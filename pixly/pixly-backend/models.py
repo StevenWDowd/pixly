@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-#from app import app
+
 db = SQLAlchemy()
+
 
 def connect_db(app):
     """Connect to database."""
@@ -8,8 +9,9 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
+
 class Photo(db.Model):
-    """Photos in the system."""
+    """Photos in the database."""
 
     __tablename__ = "photos"
 
@@ -36,12 +38,12 @@ class Photo(db.Model):
         nullable=True
     )
 
-    camera_model= db.Column(
+    camera_model = db.Column(
         db.String,
         nullable=True
     )
 
-    camera_make= db.Column(
+    camera_make = db.Column(
         db.String,
         nullable=True
     )

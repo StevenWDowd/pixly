@@ -27,11 +27,11 @@ function AddPhotoForm({ uploadPhoto }) {
         navigate("/");
       } catch (err) {
         console.log(err, "error caught in AddPhotoForm");
-        alert("Sorry, there was an error in your upload.")
+        alert("Sorry, there was an error in your upload.");
       }
-  } else {
-    alert("You must attach a .jpg file");
-  }
+    } else {
+      alert("You must attach a .jpg file");
+    }
   }
   return (
     <form className="AddPhotoForm" onSubmit={handleSubmit}>
@@ -42,7 +42,10 @@ function AddPhotoForm({ uploadPhoto }) {
         type="file"
         accept=".jpg"
         files={formData}
-        onChange={handleChange}></input>
+        onChange={handleChange}
+        required
+      >
+      </input>
       <button className="AddPhotoForm-submit-btn">Submit Photo</button>
     </form>
   );

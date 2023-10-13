@@ -2,10 +2,9 @@ import boto3
 import os
 from dotenv import load_dotenv
 from uuid import uuid4
-from PIL import Image, ExifTags
+from PIL import Image, ImageOps
 from PIL.ExifTags import TAGS
 from tempfile import NamedTemporaryFile
-
 
 load_dotenv()
 
@@ -24,6 +23,7 @@ s3 = boto3.client(
 
 def create_presigned_url(key):
     """Creates presigned URL for object in s3 bucket"""
+
     presigned_url = s3.generate_presigned_url(
         ClientMethod="get_object",
         Params={
@@ -32,11 +32,13 @@ def create_presigned_url(key):
         },
         ExpiresIn=EXPIRES_IN_6_DAYS
     )
+
     return presigned_url
 
 
 def upload_to_s3(image_file):
     """Uploads an image to S3 storage"""
+
     new_key = str(uuid4())
 
     s3.upload_fileobj(
@@ -44,12 +46,13 @@ def upload_to_s3(image_file):
         PIXLEY_BUCKET,
         new_key,
         ExtraArgs={'ContentType': 'image/jpeg'})
-    print("uploaded")
+
     return new_key
 
 
 def get_exif_data(image_file):
-    """Retrieves EXIF data from an image file, returns a dict. """
+    """Retrieves EXIF data from an image file, returns a dict of EXIF data."""
+
     image_exif_dict = {
         "gps_info": None,
         "camera_model": None,
@@ -80,18 +83,20 @@ def get_exif_data(image_file):
 
 
 def black_white_photo(key):
+    """Changes photo based on key to grayscale."""
+
     with NamedTemporaryFile(suffix=".jpg", delete=False) as temp:
         s3.download_file(PIXLEY_BUCKET, key, temp.name)
 
-        print("key is ", key)
-
         with Image.open(temp.name) as t:
-            print("entered Image with block")
             gray_scale = t.convert("L")
             gray_scale.save(temp.name)
-            print(t.format, "this is format")
+
+            orientation = ImageOps.exif_transpose(gray_scale)
+            orientation.save(temp.name)
+
             s3.upload_file(
                 temp.name,
                 PIXLEY_BUCKET,
-                key)
-
+                key,
+                ExtraArgs={'ContentType': 'image/jpeg'})
