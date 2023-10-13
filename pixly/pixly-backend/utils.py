@@ -99,3 +99,22 @@ def black_white_photo(key):
                 PIXLEY_BUCKET,
                 key,
                 ExtraArgs={'ContentType': 'image/jpeg'})
+
+def colorize(key):
+    """Changes photo based on key to RGB color version."""
+
+    with NamedTemporaryFile(suffix=".jpg", delete=False) as temp:
+        s3.download_file(PIXLEY_BUCKET, key, temp.name)
+
+        with Image.open(temp.name) as t:
+            color_photo = t.convert("RGB")
+            color_photo.save(temp.name)
+
+            oriented = ImageOps.exif_transpose(color_photo)
+            oriented.save(temp.name)
+
+            s3.upload_file(
+                temp.name,
+                PIXLEY_BUCKET,
+                key,
+                ExtraArgs={'ContentType': 'image/jpeg'})

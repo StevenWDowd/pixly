@@ -69,6 +69,20 @@ class PixlyApi {
     return photo;
   }
 
+  //Transforms an image into a color version on the back end.
+  //NOTE: not currently working.
+  static async colorizeImage(id){
+    const data = JSON.stringify({command: "colorize"});
+    const res = await fetch (`${BASE_URL}/photos/${id}`, {
+      method: 'POST',
+      body: data,
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    const photo = await res.json();
+    return photo;
+  }
+
 }
 
 export default PixlyApi;

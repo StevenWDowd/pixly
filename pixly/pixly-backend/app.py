@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 import os
 from models import db, connect_db, Photo
-from utils import upload_to_s3, create_presigned_url, get_exif_data, black_white_photo
+from utils import upload_to_s3, create_presigned_url, get_exif_data
+from utils import black_white_photo, colorize
 from sqlalchemy.exc import IntegrityError
 from flask_cors import CORS
 
@@ -88,9 +89,14 @@ def alter_photo(id):
     """Alters photo to grayscale based on user input """
 
     command = request.json["command"]
+
     if command == "blackwhite":
         photo = Photo.query.get_or_404(id)
         black_white_photo(photo.s3_key)
+
+    if command == "colorize":
+        photo = Photo.query.get_or_404(id)
+        colorize(photo.s3_key)
 
     photo = Photo.query.get_or_404(id)
 
