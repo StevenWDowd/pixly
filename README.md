@@ -9,3 +9,4 @@
 - Future features include rotating photos, applying filters to images, image resizing, etc.
 - This application currently has not tests.
 
+## Instructions:
